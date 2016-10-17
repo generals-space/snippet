@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <style>
+      /*.scrollbar类: div元素外框架, 固定高度, 当内部元素宽高超过此元素时发生滚动*/
+      .scrollbar{
+        width: 65px;height: 300px;
+        float: left;
+        margin: 0 0 25px 30px;
+        background: #F5F5F5;
+        overflow: scroll;
+      }
+      /*.force-overflow: .scrollbar的内部元素*/
+      .force-overflow{
+        min-width: 100px; min-height: 450px;
+      }
+
+      /*
+      滚动条组成, 共有7个
+
+      ::-webkit-scrollbar 滚动条整体部分
+      ::-webkit-scrollbar-track  滚动条的轨道（里面装有Thumb）
+      ::-webkit-scrollbar-thumb  滚动条里面的滑块，能向上向下移动（或往左往右移动，取决于是垂直滚动条还是水平滚动条）
+      ::-webkit-scrollbar-button 滚动条的轨道的两端按钮，允许通过点击微调滑块的位置。
+      ::-webkit-scrollbar-track-piece 内层轨道，滚动条中间部分（除去）
+      ::-webkit-scrollbar-corner 边角，即两个滚动条的交汇处
+      ::-webkit-resizer 两个滚动条的交汇处上用于通过拖动调整元素大小的小控件
+      */
+
+      /*
+      *  STYLE 1
+      */
+
+      /*
+      scrollbar元素(background-color设置为了red, 注意看红色的区域)
+      width属性是纵向滚动条的宽度, height是横向滚动条的高度
+       
+      */
+      #style-1::-webkit-scrollbar{
+        width: 20px; height: 20px;
+        background-color: red;
+      }
+      /*  
+      scrollbar-track元素(蓝色区域)
+      */
+      #style-1::-webkit-scrollbar-track{
+        border-radius: 10px;
+        background-color: blue;
+      }
+      #style-1::-webkit-scrollbar-thumb{
+        border-radius: 10px;
+        background-color: yellow;
+      }
+      /*
+      scrollbar-corner(绿色区域)
+      设置了圆角哦
+      */
+      #style-1::-webkit-scrollbar-corner{
+        background-color: green;
+        border-radius: 10px;
+      }
+      /*
+      *  STYLE 2
+      */
+      #style-2::-webkit-scrollbar{
+        width: 14px; height:14px;
+        background: transparent;
+      }
+      /*
+      track与thumb元素的宽度不是通过width/height属性设置的, 因为width/height无效, 需要使用border属性, 并将border的颜色设置为透明.
+      注意圆角与宽度之间的关系, 因为border也算到宽度里了.
+
+      但是, 使用border的话, 就不能使用background-color了, 因为如果添加了background-color属性, 背景颜色将会覆盖本来设置为透明的border. 使得宽度定义无效.
+
+      解决的方法是, 使用box-shadow属性. 设置内阴影的x偏移值为存在颜色填充的宽度(scrollbar的宽度减去track或thumb的border*2的值, 这里是14-4*2=6px)
+
+      然后是圆角, 虽然在网页中展示出来的有颜色填充的区域宽度是6px, 但track与thumb的border-radius值可不能设为3, 因为border的存在, 需要设置7px, 颜色填充区域才可能出现正常的圆角
+      */
+      #style-2::-webkit-scrollbar-track{
+        border: 4px solid transparent;  
+        border-radius: 7px;
+        box-shadow: inset 6px 6px 0px rgba(255,0,0,1);
+        /*background-color:red;*/
+      }
+      #style-2::-webkit-scrollbar-thumb{
+        border: 4px solid transparent;  
+        border-radius: 7px;
+        box-shadow: inset 6px 6px 0px rgba(255,255,0,1);
+        /*background-color:yellow;*/        
+      }
+
+      /*
+      *  STYLE 3
+      */
+
+      #style-3::-webkit-scrollbar {  
+        width: 12px;  
+        height: 12px;  
+      }
+      #style-3::-webkit-scrollbar-track,  
+      #style-3::-webkit-scrollbar-thumb {  
+        border-radius: 6px;  
+        border: 3px solid transparent;  
+      }
+      /*颜色,透明度都一样, 怎么看起来不一样呢?*/
+      #style-3::-webkit-scrollbar-track {  
+        box-shadow: 0 0 0 6px rgba(0,0,0,.2) inset;  
+      }
+        
+      #style-3::-webkit-scrollbar-thumb {  
+        box-shadow: 0 0 0 6px rgba(0,0,0,.3) inset;  
+      }
+
+      #style-3::-webkit-scrollbar-corner {  
+        background: transparent;  
+      }
+
+    </style>
+</head>
+<body>
+	  <div id="wrapper">
+	    <div class="scrollbar" id="style-default">
+	      <div class="force-overflow"></div>
+	    </div>
+
+	    <div class="scrollbar" id="style-1">
+	      <div class="force-overflow"></div>
+	    </div>
+
+	    <div class="scrollbar" id="style-2">
+	      <div class="force-overflow"></div>
+	    </div>
+
+      <div class="scrollbar" id="style-3">
+	      <div class="force-overflow"></div>
+	    </div>
+
+
+      <div>
+        :horizontal – horizontal伪类应用于水平方向的滚动条
+
+        :vertical – vertical伪类应用于竖直方向的滚动条
+
+        :decrement – decrement伪类应用于按钮和内层轨道(track piece)。它用来指示按钮或者内层轨道是否会减小视窗的位置(比如，垂直滚动条的上面，水平滚动条的左边。)
+
+        :increment – increment伪类和decrement类似，用来指示按钮或内层轨道是否会增大视窗的位置(比如，垂直滚动条的下面和水平滚动条的右边。)
+
+        :start – start伪类也应用于按钮和滑块。它用来定义对象是否放到滑块的前面。
+
+        :end – 类似于start伪类，标识对象是否放到滑块的后面。
+
+        :double-button – 该伪类以用于按钮和内层轨道。用于判断一个按钮是不是放在滚动条同一端的一对按钮中的一个。对于内层轨道来说，它表示内层轨道是否紧靠一对按钮。
+
+        :single-button – 类似于double-button伪类。对按钮来说，它用于判断一个按钮是否自己独立的在滚动条的一段。对内层轨道来说，它表示内层轨道是否紧靠一个single-button。
+
+        :no-button – 用于内层轨道，表示内层轨道是否要滚动到滚动条的终端，比如，滚动条两端没有按钮的时候。
+        
+        :corner-present – 用于所有滚动条轨道，指示滚动条圆角是否显示。
+
+        :window-inactive – 用于所有的滚动条轨道，指示应用滚动条的某个页面容器(元素)是否当前被激活。(在webkit最近的版本中，该伪类也可以用于::selection伪元素。webkit团队有计划扩展它并推动成为一个标准的伪类)
+      </div>
+	</div>
+
+</body>
+</html>
+
