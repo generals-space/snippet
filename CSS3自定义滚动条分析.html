@@ -68,7 +68,7 @@
         background: transparent;
       }
       /*
-      track与thumb元素的宽度不是通过width/height属性设置的, 因为width/height无效, 需要使用border属性, 并将border的颜色设置为透明.
+      track与thumb元素的宽度不是通过width/height属性设置的, 因为width/height无效, 它们的宽度默认与scrollbar元素保持一致, 如果想要让它们宽度不同, 则需要使用border属性, 然后将border的颜色设置为透明.
       注意圆角与宽度之间的关系, 因为border也算到宽度里了.
 
       但是, 使用border的话, 就不能使用background-color了, 因为如果添加了background-color属性, 背景颜色将会覆盖本来设置为透明的border. 使得宽度定义无效.
@@ -137,7 +137,7 @@
 	    </div>
 
 
-      <div>
+      <pre>
         :horizontal – horizontal伪类应用于水平方向的滚动条
 
         :vertical – vertical伪类应用于竖直方向的滚动条
@@ -159,7 +159,7 @@
         :corner-present – 用于所有滚动条轨道，指示滚动条圆角是否显示。
 
         :window-inactive – 用于所有的滚动条轨道，指示应用滚动条的某个页面容器(元素)是否当前被激活。(在webkit最近的版本中，该伪类也可以用于::selection伪元素。webkit团队有计划扩展它并推动成为一个标准的伪类)
-      </div>
+      </pre>
 	</div>
 
 </body>
