@@ -15,22 +15,50 @@ class LDAPConn():
     """
     LDAP连接管理类, 类似于数据库连接类, 实现增删改查的功能
     """
-    def __init__ (self, opts):
+    def __init__ (self, *args, **kwargs):
+        ## ldap_result为封装类中执行ldap相关函数的异常返回结果
+        ## {'desc': "Can't contact LDAP server"},取其中desc字段的值
+        self.ldap_result = ''
+        ## ldap函数执行成功时为1, 异常时赋值为0
+        self.ldap_status = 0
+        ## 是否已绑定某个用户, 可看作是否已登录
+        self.is_bind = 0
+        self.base_dn = ''
+
+
 
         ## python没有?:三目运算符
-        ## self.host       = 'host' in opts ? opts['host'] : 'localhost'
-        self.host = opts['host'] if 'host' in opts else 'localhost'
-        self.base_dn    = opts['base_dn']
-        self.root_cn    = opts['root_cn']
-        self.root_pwd   = opts['root_pwd']
-
-        self.conn = ldap.initialize(self.host)
+        ## self.host       = 'host' in kwargs ? kwargs['host'] : 'localhost'
+        self.host = kwargs['host'] if 'host' in kwargs else '127.0.0.1'
+        self.port = kwargs['port'] if 'port' in kwargs else '389'
+        self.ldap_addr = 'ldap://' + self.host + ':' + self.port
+        ## initialize不会出现异常, 就算ldap服务器的地址写错也不会
+        self.conn = ldap.initialize(self.ldap_addr)
         self.conn.set_option(ldap.OPT_REFERRALS, 0)
         self.conn.protocol_version = ldap.VERSION3
-        self.conn.simple_bind_s(self.root_cn, self.root_pwd)
+
+    def get_base_dn(self):
+        return self.base_dn
+    def set_base_dn(self, base_dn):
+        self.base_dn = base_dn
+
+    def verify(self, dn, pwd):
+        try:
+	    dn = dn if self.base_dn == '' else dn + ',' + self.base_dn
+            ## 可以是任何用户, 验证后就获得该用户的相应权限
+            self.conn.simple_bind_s(dn, pwd)
+            self.ldap_status = 1
+            self.ldap_result = ''
+            ## 验证成功, 则可看作已登录, 拥有指定权限
+            self.is_bind = 1
+        except ldap.LDAPError, e:
+            ## e貌似是list类型
+            self.ldap_result = e[0]['desc']
+            self.is_bind = 0
+        return self.ldap_status
 
     def list(self,
-        filter,
+        filter='',
         scope = ldap.SCOPE_SUBTREE,
         attr = None
     ):
@@ -39,18 +67,25 @@ class LDAPConn():
                 "ou=People,$BASE_DN", "ou=Group,$BASE_DN)"
                 对应命令行中ldapsearch中的-b参数的取值
         param: filter, 过滤语法, 可以指定cn值, ou类型等.
+	return: 返回值为list类型
         """
-        result = {}
+        result = []
         try:
-            ldap_result = self.conn.search_s(self.base_dn, scope, filter, attr)
-            for entry in ldap_result:
+            search_result = self.conn.search_s(self.base_dn, scope, filter, attr)
+            for entry in search_result:
                 name, data = entry
+                tmpObj = {}
                 for key, val in data.items():
-                    print '%s: %s' % (key, val)
-                    result[key] = val
+                    ## print '%s: %s' % (key, val)
+                    tmpObj[key] = val
+                result.append(tmpObj)
+            self.ldap_status = 1
+            self.ldap_result = ''
             return result
         except ldap.LDAPError, e:
-            print e
+            self.ldap_status = 0
+            self.ldap_result = e[0]['desc']
+            return result
     def add(self, dn, obj):
         """
         function: 添加对象, 可以是People, Group
@@ -58,16 +93,23 @@ class LDAPConn():
         param: obj, 目标对象所拥有的属性
         """
         try:
+	    dn = dn if self.base_dn == '' else dn + ',' + self.base_dn
             ldif = modlist.addModlist(obj)
             self.conn.add_s(dn, ldif)
+            self.ldap_status = 1
+            self.ldap_result = ''
+	    return result
         except ldap.LDAPError, e:
-            print e
+            self.ldap_status = 0
+            self.ldap_result = e[0]['desc']
+            return e
 
     def delete(self, dn):
         try:
-            self.conn.delete_s(dn)
+            del_result = self.conn.delete_s(dn)
         except ldap.LDAPError, e:
-            print e
+            ## {'matched': 'ou=People,dc=jumpserver,dc=org', 'desc': 'No such object'}
+            return e
 
     def modify(self, dn, attrs):
         """
@@ -78,11 +120,24 @@ class LDAPConn():
         except ldap.LDAPError, e:
             print e
 
-def ldap_add_user():
+if __name__ == '__main__':
+    host = '172.17.0.16'
+    base_dn = 'dc=jumpserver,dc=org'
+    ## 尝试连接, ldap_conn是全局变量, 因为if语句的作用域就是全局的
+    ldap_conn = LDAPConn(host = host)
+    ## 最好记得设置base_dn, 会方便一些
+    ldap_conn.set_base_dn(base_dn)
+    ## 身份验证, 之后获得对应的用户权限
+    status = ldap_conn.verify('cn=admin', 'secret234')
+    if not status == 1:
+        print ldap_conn.ldap_result
+
+    ## 验证增删改查操作
+    ## 添加用户
     user_name = 'general'
     user_pwd = '123456'
     user_id = 1003
-    user_dn = 'uid=%s,ou=People,%s' % (user_name, ldap_cfg['base_dn'])
+    user_dn = 'uid=%s,ou=People' % user_name
     ## 注意user_obj的格式, 所有字段都是数组类型, 
     ## 并且uid,cn,uidNumber,gidNumber必须为字符串类型
     user_obj = {
@@ -100,22 +155,12 @@ def ldap_add_user():
         'gidNumber': [str(user_id)],
         'homeDirectory': ['/home/%s' % user_name]
     }
-    ## 这里ldap_conn是全局变量
-    ldap_conn.add(user_dn, user_obj)
-    
-def ldap_del_user(user_name, base_dn):
-    dn = "uid=%s,ou=People,%s" % (user_name, base_dn)
-    ldap_conn.delete(dn)
-
-if __name__ == '__main__':
-    ldap_cfg = {
-        'host': 'ldap://172.17.0.16:389',
-        'base_dn': 'dc=jumpserver,dc=org',
-        'root_cn': 'cn=admin,dc=jumpserver,dc=org',
-        'root_pwd': 'secret234'
-    }
-    ldap_conn = LDAPConn(ldap_cfg)
-    ldap_add_user()
-    ldap_conn.list('cn=general')
-    ldap_del_user('general','dc=jumpserver,dc=org')
-    ldap_conn.list('cn=general')
+    status = ldap_conn.add(user_dn, user_obj)
+    print 'here'
+    if not status == 1:
+        print ldap_conn.ldap_result
+    else:
+        print 'success'
+ 
+    user = ldap_conn.list(filter = "cn=%s" % user_name)
+    print user
