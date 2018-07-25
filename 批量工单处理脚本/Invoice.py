@@ -29,6 +29,7 @@ print('任务列表获取成功, 正在解析...')
 taskList = []
 ## 与jQ不同的是, pyQuery至少需要先实例化得到目标对象才行(毕竟不是内嵌的代码)
 pyQuery = pyQuery(result)
+## items()返回一个生成器, 适合用来处理list类型的元素
 for item in pyQuery('.datalist').items():
     ele = item.find('td')
     firField = ele.eq(0).find('input')
