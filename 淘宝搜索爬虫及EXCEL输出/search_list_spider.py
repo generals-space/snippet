@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import re
+import json
 import requests
 import pandas
 from collections import OrderedDict
@@ -10,8 +11,34 @@ from pyquery import PyQuery as pq
 keyword = '日本水母面膜'
 ## 这是淘宝搜索列表的url前面的相同部分，q=''代表搜索的关键词
 ## s=''代表第几页，s=0为第1页s=44为第二页，以此类推
-search_url_prefix = 'https://s.taobao.com/search?q=%s&s=' % keyword
+search_url_prefix = 'https://s.taobao.com/search?q=' + keyword + '&s='
 detail_url_prefix = 'https://store.taobao.com/shop/view_shop.htm?user_number_id='
+## 鼠标悬停到查询结果的店铺名元素上时, 会查询此店铺的等级和徽章等信息
+## sid的值应该为掌柜的user_id, callback值为jsonp形式的函数名, 去掉它才能得到正常的json数据
+## rank_api_url = 'https://s.taobao.com/api?sid=%s&callback=shopcard&app=api&m=get_shop_card'
+rank_api_url = 'https://s.taobao.com/api?sid=%s&app=api&m=get_shop_card'
+rank_map = {
+    'icon-supple-level-xin': '红心',
+    'icon-supple-level-zuan': '蓝钻',
+    'icon-supple-level-guan': '蓝色皇冠',
+    'icon-supple-level-jinguan': '金色皇冠',
+}
+
+
+def getShopRank(user_ids):
+    '''
+    获取店铺等级
+    '''
+    shop_rank_list = []
+    for user_id in user_ids:
+        res = requests.get(rank_api_url % user_id).text
+        rankInfo = json.loads(res)
+        ## 貌似不会存在那种, 蓝钻 x 2 + 红心 x 1的情况, 简单了很多
+        ## [{'levelClass': 'icon-supple-level-zuan'}, {'levelClass': 'icon-supple-level-zuan'}]
+        levelClasses = rankInfo['levelClasses']
+        levelClass = rank_map[levelClasses[0]['levelClass']]
+        shop_rank_list.append(levelClass + ' x ' + str(len(levelClasses)))
+    return shop_rank_list
 
 def getShopDetail(user_ids):
     shop_link_list = []
@@ -36,7 +63,7 @@ def getShopDetail(user_ids):
 
 def getList(startpage, endpage):
     #如果需要爬取具体的商品详情，页数过多可能会出现异常，此函数可以用来控制一次爬取的页数
- 
+
     url_list = [search_url_prefix + str(i * 44) for i in range(startpage - 1, endpage)]  #生成需要爬取的商品列表url
  
     #定义存储商品列表数据数据的列表
@@ -76,6 +103,7 @@ def getList(startpage, endpage):
 
         ## 获取店铺信息
         shop_link, shop_name = getShopDetail(user_id)
+        shop_rank = getShopRank(user_id)
 
         #逐个存储
         nid_list.extend(nid)
@@ -85,6 +113,7 @@ def getList(startpage, endpage):
         item_loc_list.extend(item_loc)
         shop_link_list.extend(shop_link)
         shop_name_list.extend(shop_name)
+        shop_rank_list.extend(shop_rank)
 
         if nick is not '':
             nick_list.extend(nick)
@@ -97,7 +126,7 @@ def getList(startpage, endpage):
         '商品销量':      view_sales_list,
         '商品发货地址':   item_loc_list,
         '店铺名称': shop_name_list,
-        ## '店铺等级': shop_rank_list,
+        '店铺等级': shop_rank_list,
         '店铺链接': shop_link_list,
         '掌柜名':        nick_list
     }
