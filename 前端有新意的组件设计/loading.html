@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        body{
+            background-color: #eee;
+        }
+        /* 顺时针旋转动画 */
+
+        @-webkit-keyframes clockwise-rotate {
+            0% {
+                -webkit-transform: rotate(0);
+                -moz-transform: rotate(0);
+                -ms-transform: rotate(0);
+                -o-transform: rotate(0);
+                transform: rotate(0)
+            }
+            100% {
+                -webkit-transform: rotate(360deg);
+                -moz-transform: rotate(360deg);
+                -ms-transform: rotate(360deg);
+                -o-transform: rotate(360deg);
+                transform: rotate(360deg)
+            }
+        }
+        @-moz-keyframes clockwise-rotate {
+            0% {
+                -webkit-transform: rotate(0);
+                -moz-transform: rotate(0);
+                -ms-transform: rotate(0);
+                -o-transform: rotate(0);
+                transform: rotate(0)
+            }
+            100% {
+                -webkit-transform: rotate(360deg);
+                -moz-transform: rotate(360deg);
+                -ms-transform: rotate(360deg);
+                -o-transform: rotate(360deg);
+                transform: rotate(360deg)
+            }
+        }
+        @-ms-keyframes clockwise-rotate {
+            0% {
+                -webkit-transform: rotate(0);
+                -moz-transform: rotate(0);
+                -ms-transform: rotate(0);
+                -o-transform: rotate(0);
+                transform: rotate(0)
+            }
+            100% {
+                -webkit-transform: rotate(360deg);
+                -moz-transform: rotate(360deg);
+                -ms-transform: rotate(360deg);
+                -o-transform: rotate(360deg);
+                transform: rotate(360deg)
+            }
+        }
+        @-o-keyframes clockwise-rotate {
+            0% {
+                -webkit-transform: rotate(0);
+                -moz-transform: rotate(0);
+                -ms-transform: rotate(0);
+                -o-transform: rotate(0);
+                transform: rotate(0)
+            }
+            100% {
+                -webkit-transform: rotate(360deg);
+                -moz-transform: rotate(360deg);
+                -ms-transform: rotate(360deg);
+                -o-transform: rotate(360deg);
+                transform: rotate(360deg)
+            }
+        }
+        @keyframes clockwise-rotate {
+            0% {
+                -webkit-transform: rotate(0);
+                -moz-transform: rotate(0);
+                -ms-transform: rotate(0);
+                -o-transform: rotate(0);
+                transform: rotate(0)
+            }
+            100% {
+                -webkit-transform: rotate(360deg);
+                -moz-transform: rotate(360deg);
+                -ms-transform: rotate(360deg);
+                -o-transform: rotate(360deg);
+                transform: rotate(360deg)
+            }
+        }
+        /* 顺时针旋转动画结束 */
+        /* 逆时针旋转动画 */
+        @-webkit-keyframes anti-clockwise-rotate {
+            0% {
+                -webkit-transform: rotate(360deg);
+                -moz-transform: rotate(360deg);
+                -ms-transform: rotate(360deg);
+                -o-transform: rotate(360deg);
+                transform: rotate(360deg)
+            }
+            100% {
+                -webkit-transform: rotate(0);
+                -moz-transform: rotate(0);
+                -ms-transform: rotate(0);
+                -o-transform: rotate(0);
+                transform: rotate(0)
+            }
+        }
+        @-moz-keyframes anti-clockwise-rotate {
+            0% {
+                -webkit-transform: rotate(360deg);
+                -moz-transform: rotate(360deg);
+                -ms-transform: rotate(360deg);
+                -o-transform: rotate(360deg);
+                transform: rotate(360deg)
+            }
+            100% {
+                -webkit-transform: rotate(0);
+                -moz-transform: rotate(0);
+                -ms-transform: rotate(0);
+                -o-transform: rotate(0);
+                transform: rotate(0)
+            }
+        }
+        @-ms-keyframes anti-clockwise-rotate {
+            0% {
+                -webkit-transform: rotate(360deg);
+                -moz-transform: rotate(360deg);
+                -ms-transform: rotate(360deg);
+                -o-transform: rotate(360deg);
+                transform: rotate(360deg)
+            }
+            100% {
+                -webkit-transform: rotate(0);
+                -moz-transform: rotate(0);
+                -ms-transform: rotate(0);
+                -o-transform: rotate(0);
+                transform: rotate(0)
+            }
+        }
+        @-o-keyframes anti-clockwise-rotate {
+            0% {
+                -webkit-transform: rotate(360deg);
+                -moz-transform: rotate(360deg);
+                -ms-transform: rotate(360deg);
+                -o-transform: rotate(360deg);
+                transform: rotate(360deg)
+            }
+            100% {
+                -webkit-transform: rotate(0);
+                -moz-transform: rotate(0);
+                -ms-transform: rotate(0);
+                -o-transform: rotate(0);
+                transform: rotate(0)
+            }
+        }
+        @keyframes anti-clockwise-rotate {
+            0% {
+                -webkit-transform: rotate(360deg);
+                -moz-transform: rotate(360deg);
+                -ms-transform: rotate(360deg);
+                -o-transform: rotate(360deg);
+                transform: rotate(360deg)
+            }
+            100% {
+                -webkit-transform: rotate(0);
+                -moz-transform: rotate(0);
+                -ms-transform: rotate(0);
+                -o-transform: rotate(0);
+                transform: rotate(0)
+            }
+        }
+        /* 逆时针旋转动画结束 */
+
+        .spinner{
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: 100px;
+            height: 100px;
+            margin: -50px 0 0 -50px;
+            -moz-border-radius: 50%;
+            border-radius: 50%;
+            border: 3px solid transparent;
+            border-top-color: #fff;
+            -webkit-animation: clockwise-rotate 2s linear infinite;
+            -moz-animation: clockwise-rotate 2s linear infinite;
+            animation: clockwise-rotate 2s linear infinite;
+        }
+        .spinner:before {
+            content: "";
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            right: 5px;
+            bottom: 5px;
+            -moz-border-radius: 50%;
+            border-radius: 50%;
+            border: 3px solid transparent;
+            border-top-color: #fff;
+            -webkit-animation: anti-clockwise-rotate 1s linear infinite;
+            -moz-animation: anti-clockwise-rotate 1s linear infinite;
+            -ms-animation: anti-clockwise-rotate 1s linear infinite;
+            -o-animation: anti-clockwise-rotate 1s linear infinite;
+            animation: anti-clockwise-rotate 1s linear infinite;
+        }
+        .spinner:after {
+            content: "";
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            right: 15px;
+            bottom: 15px;
+            -moz-border-radius: 50%;
+            border-radius: 50%;
+            border: 3px solid transparent;
+            border-top-color: #fff;
+            -webkit-animation: clockwise-rotate 1.5s linear infinite;
+            -moz-animation: clockwise-rotate 1.5s linear infinite;
+            -ms-animation: clockwise-rotate 1.5s linear infinite;
+            -o-animation: clockwise-rotate 1.5s linear infinite;
+            animation: clockwise-rotate 1.5s linear infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="spinner"></div>
+</body>
+</html>
