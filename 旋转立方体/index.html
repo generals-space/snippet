@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>旋转立方体</title>
+    <style>    
+        /*立方体效果*/
+        .wrap {
+            width: 120px;height: 200px;
+            position: fixed;
+            top: 15px;
+            display: table-cell;
+            margin: 20px;
+            vertical-align: middle;
+            text-align: center;
+            z-index: 22;
+        }
+        .cube {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto;
+            transform-style: preserve-3d;
+            transform: rotateX(-30deg) rotateY(-80deg);
+            animation: rotate linear 20s infinite;
+        }
+        @-webkit-keyframes rotate {
+            from {transform: rotateX(0deg) rotateY(0deg);}
+            to {transform: rotateX(360deg) rotateY(360deg);}
+        }
+        .cube div {
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            opacity: 0.8;
+            transition: all .4s;
+        }
+        .cube .out_front {transform: rotateY(0deg) translateZ(60px);}
+        .cube .out_back {transform: translateZ(-60px) rotateY(180deg);}
+        .cube .out_left {transform: rotateY(-90deg) translateZ(60px);}
+        .cube .out_right {transform: rotateY(90deg) translateZ(60px);}
+        .cube .out_top {transform: rotateX(90deg) translateZ(60px);}
+        .cube .out_bottom {transform: rotateX(-90deg) translateZ(60px);}
+    </style>
+</head>
+<body>
+    <div class="wrap">
+        <div class="cube">
+            <div class="out_front"><img src="./cube01.bmp" class="pic"></div>
+            <div class="out_back"><img src="./cube02.bmp" class="pic"></div>
+            <div class="out_left"><img src="./cube03.bmp" class="pic"></div>
+            <div class="out_right"><img src="./cube04.bmp" class="pic"></div>
+            <div class="out_top"><img src="./cube05.bmp" class="pic"></div>
+            <div class="out_bottom"><img src="./cube06.bmp" class="pic">
+            </div>
+        </div>
+    </div>
+</body>
+</html>
