@@ -1,9 +1,9 @@
 #!/bin/bash
-source ./libs/lib.sh
+source $(cd $(dirname $0) && pwd)/libs/lib.sh
 
 echo $__file__
 echo $__dir__
-$__date
+$__now__
 sleep 2
-$__date
+$__now__
 echo $__user__

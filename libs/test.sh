@@ -1,8 +1,8 @@
 #!/bin/bash
-source ./lib.sh
+source $(cd $(dirname $0) && pwd)/lib.sh
 
 echo $__file__
 echo $__dir__
-echo $__date__
+$__now__
 sleep 2
-echo $__date__
+$__now__
